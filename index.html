@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérificateur de Followers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vérificateur de Followers</h1>
+        <label for="followers">Liste de vos followers :</label>
+        <textarea id="followers"></textarea>
+        <label for="following">Liste de vos following :</label>
+        <textarea id="following"></textarea>
+        <button onclick="checkFollowers()">Vérifier</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function extractUsernames(rawText) {
+            const lines = rawText.split("\n");
+            const usernames = [];
+            for (let line of lines) {
+                if (line.startsWith("Photo de profil de ")) {
+                    continue;
+                }
+                if (line === line.toLowerCase()) {
+                    usernames.push(line.trim());
+                }
+            }
+            return usernames;
+        }
+
+        function checkFollowers() {
+            const followersRaw = document.getElementById("followers").value.trim();
+            const followingRaw = document.getElementById("following").value.trim();
+
+            const followers = new Set(extractUsernames(followersRaw));
+            const following = new Set(extractUsernames(followingRaw));
+
+            const notFollowingBack = [...following].filter(user => !followers.has(user));
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "<strong>Les utilisateurs qui ne te suivent pas en retour :</strong><br>";
+            notFollowingBack.forEach(user => {
+                resultDiv.innerHTML += user + "<br>";
+            });
+        }
+    </script>
+</body>
+</html>
